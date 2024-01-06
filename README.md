@@ -33,3 +33,6 @@ Endpoints
     Cadastrar Operação: POST /operacoes/
 
 Certifique-se de revisar a documentação da API em http://localhost:8000/docs para obter detalhes sobre como usar cada endpoint.
+
+## Licença
+Este projeto é licenciado sob a [Licença MIT](./LICENSE.md).
