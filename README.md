@@ -28,11 +28,11 @@ O servidor estará disponível em http://localhost:8000.
 
 Endpoints
 
-prefixo "/list"
+prefixo "/operacoes"
 
-    Listar Operações: GET /
-    Obter Operação: GET /operacoes/{operacao_id}
-    Cadastrar Operação: POST /operacoes/cadastrar/
+    Listar Operações: GET /list
+    Obter Operação: GET /operacao/{operacao_id}
+    Cadastrar Operação: POST /cadastrar
 
 Certifique-se de revisar a documentação da API em http://localhost:8000/docs para obter detalhes sobre como usar cada endpoint.
 
