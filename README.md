@@ -30,10 +30,13 @@ Endpoints
 
 prefixo "/operacoes"
 
+    Cadastrar Operação: POST /cadastrar
     Listar Operações: GET /list
     Obter Operação: GET /operacao/{operacao_id}
-    Cadastrar Operação: POST /cadastrar
-
+    Obter Operação pelo codigo da ação: GET /operacao/cod/{cod_acao}
+    Obter média da operação do tipo 'compra': GET /operacao/media_compras
+    Obter média da operação do tipo 'venda': GET /operacao/media_vendas
+    
 Certifique-se de revisar a documentação da API em http://localhost:8000/docs para obter detalhes sobre como usar cada endpoint.
 
 ## Licença
