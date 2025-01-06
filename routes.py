@@ -7,18 +7,6 @@ from bson import ObjectId
 
 router = APIRouter()
 
-# Função para calcular operação de compra
-def calcular_compra(val: float, qt: int, corretagem: int) -> float:
-    taxa = 0.003
-    custo_total = (val * qt) + taxa + corretagem
-    return custo_total
-
-# Função para calcular operação de venda
-def calcular_venda(val: float, qt: int, corretagem: int) -> float:
-    taxa = 0.003
-    custo_total = (val * qt) - taxa - corretagem
-    return custo_total
-
 # Função para buscar operação de compra
 def buscar_operacoes_compras(db: Collection) -> List[float]:
     operacoes_compra = db["acoes"].find({"tipo": "compra"}, {"_id": 0, "valor_total": 1})
@@ -34,26 +22,26 @@ def buscar_operacoes_vendas(db: Collection) -> List[float]:
 # Função para calcular media
 def calcular_media(valores: List[float]) -> float:
     if not valores:
-        return 0.0
+        return 0.00
     return sum(valores) / len(valores)
     
 # Rota para cadastrar uma operação    
 @router.post("/cadastrar")
 async def cadastrar_operacao(operacao: Operacao, db=Depends(get_database)):
-    if operacao.tipo == "compra":
-        valor_total = calcular_compra(operacao.val, operacao.qt, operacao.corretagem)
-    elif operacao.tipo == "venda":
-        valor_total = calcular_venda(operacao.val, operacao.qt, operacao.corretagem)
-    else:
-        raise HTTPException(status_code=400, detail="Tipo de operação inválido. Apenas 'compra' ou 'venda' são permitidos.")
+    valor_total = operacao.calcular_valor_total(operacao.val, operacao.qt, operacao.corretagem, operacao.tipo)
     
     operacao_dict = operacao.model_dump()
     operacao_dict["data"] = operacao_dict["data"].isoformat()
     operacao_dict["valor_total"] = valor_total
     
     operacao_id = db["acoes"].insert_one(operacao_dict).inserted_id
-    return {"mensagem": "Operação cadastrada com sucesso", "operacao_id": str(operacao_id)}    
 
+    if operacao.tipo in ["compra", "venda"]:
+        return {"mensagem": "Operação cadastrada com sucesso", "operacao_id": str(operacao_id)}
+    else:
+        raise HTTPException(status_code=400, detail="Tipo de operação inválido. Apenas 'compra' ou 'venda' são permitidos.") 
+    
+    
 # Rota para listar operação pelo ID
 @router.get("/operacao/{operacao_id}", response_model=Operacao)
 async def obter_operacao(operacao_id: str, db=Depends(get_database)):
@@ -83,7 +71,7 @@ async def listar_operacoes(db=Depends(get_database)):
     operacoes = list(db["acoes"].find())
     operacoes_obj = [Operacao(**operacao) for operacao in operacoes]
     for operacao_obj, operacao in zip(operacoes_obj, operacoes):
-        operacao_obj.valor_total = float(operacao.get("valor_total", 0.0))
+        operacao_obj.valor_total = float(operacao.get("valor_total", 0.00))
     return operacoes_obj
 
 @router.get("/media_compras")

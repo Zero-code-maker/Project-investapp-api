@@ -18,10 +18,19 @@ class Operacao(BaseModel):
 
     @staticmethod
     def calcular_valor_total(val: float, qt: int, corretagem: int, tipo: TipoOperacao) -> float:
+        # Calcula o valor total da operação
+        val_total = val * qt
+        
+        # Emolumentos (3% ou 0.03) sobre o valor total
+        emolumentos = val_total * 0.03
+        
+        # valor fixo da corretagem
+        corretagem = 5.00
+        
         if tipo == TipoOperacao.compra:
-            return val * qt + 0.003 + corretagem
+            return val_total + emolumentos + corretagem
         elif tipo == TipoOperacao.venda:
-            return val * qt - 0.003 - corretagem
+            return val_total - emolumentos - corretagem
         else:
             return 0.0
 
